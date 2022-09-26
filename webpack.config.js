@@ -1,25 +1,29 @@
-const path = require('path');
-const fs = require('fs');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require("path");
+const fs = require("fs");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: () => {
-    result = fs.readdirSync(__dirname + '/src/demos').reduce(function (entries, dir) {
-      if (fs.statSync(path.join(__dirname + '/src/demos', dir)).isDirectory() && dir !== '__build__')
-      {
-        entries[dir] =path.join(__dirname + '/src/demos', dir, 'index.js')
-      }
+    result = fs
+      .readdirSync(__dirname + "/src/demos")
+      .reduce(function (entries, dir) {
+        if (
+          fs.statSync(path.join(__dirname + "/src/demos", dir)).isDirectory() &&
+          dir !== "__build__"
+        ) {
+          entries[dir] = path.join(__dirname + "/src/demos", dir, "index.ts");
+        }
 
-      return entries
-    }, {})
-    return result
+        return entries;
+      }, {});
+    return result;
   },
   devServer: {
-    contentBase: path.join(__dirname, 'src'),
+    contentBase: path.join(__dirname, "src"),
     compress: true,
     port: 9000,
-    open: true
+    open: true,
   },
   module: {
     rules: [
@@ -29,23 +33,31 @@ module.exports = {
         loader: "file-loader",
         options: {
           publicPath: "../../wasm/",
-          outputPath: "wasm/"
-        }
-      }
-    ]
+          outputPath: "wasm/",
+        },
+      },
+      {
+        test: /.ts$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-typescript"],
+          },
+        },
+        exclude: /node_modules/,
+      },
+    ],
   },
   plugins: [
-    ...fs.readdirSync(__dirname + '/src/demos').map(function(dir){
+    ...fs.readdirSync(__dirname + "/src/demos").map(function (dir) {
       return new HtmlWebpackPlugin({
-        template: path.join(__dirname + '/src/demos', dir, 'index.html'),
+        template: path.join(__dirname + "/src/demos", dir, "index.html"),
         filename: `demos/${dir}/index.html`,
-        chunks: [dir]
-      })
+        chunks: [dir],
+      });
     }),
     new CopyPlugin({
-      patterns: [
-        { from: './src/index.html', to: 'index.html' },
-      ],
+      patterns: [{ from: "./src/index.html", to: "index.html" }],
     }),
   ],
   resolve: {
@@ -54,6 +66,7 @@ module.exports = {
       child_process: false,
       path: false,
       crypto: false,
-    }
+    },
+    extensions: [".ts", ".js"],
   },
 };
