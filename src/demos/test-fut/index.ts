@@ -6,10 +6,33 @@ import {
   makeFut,
   setupThreeJSViewport,
   addShapeToScene,
+  makeFut2D,
 } from "./library";
 
 const scene = setupThreeJSViewport();
 
+const getParams = (): object => {
+  const nbOpenings = parseInt(document.querySelector("#nbOpenings").value) || 0;
+  const D = parseInt(document.querySelector("#D").value) || 0;
+  const t = parseInt(document.querySelector("#t").value) || 0;
+  const T2 = parseInt(document.querySelector("#T2").value) || 0;
+  const T3 = parseInt(document.querySelector("#T3").value) || 0;
+  const T4 = parseInt(document.querySelector("#T4").value) || 0;
+  const T5 = parseInt(document.querySelector("#T5").value) || 0;
+
+  const Di = D - 2 * t;
+  const params = {
+    nbOpenings,
+    D,
+    t,
+    Di,
+    T2,
+    T3,
+    T4,
+    T5,
+  };
+  return params;
+};
 initOpenCascade().then((openCascade) => {
   //document.getElementById("step-file").addEventListener('input', async (event) => { await loadSTEPorIGES(openCascade, event.srcElement.files[0], addShapeToScene, scene); });
 
@@ -17,9 +40,20 @@ initOpenCascade().then((openCascade) => {
     height = 70,
     thickness = 30;
   //let bottle = makeBottle(openCascade, width, height, thickness);
-  const cyl = makeFut(openCascade);
-  addShapeToScene(openCascade, cyl, scene);
+  const name = "fut-shape";
+
+  const cyl = makeFut2D(openCascade, getParams());
+  addShapeToScene(openCascade, cyl, scene, name);
   console.log("Cyl added to scene.");
+  document.getElementById("controls-form").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    document.getElementById("refreshFut");
+    scene.remove(scene.getObjectByName(name));
+    const cyl = makeFut2D(openCascade, getParams());
+    addShapeToScene(openCascade, cyl, scene, name);
+  });
 
   // window.changeSliderWidth = (value) => {
   //   width = parseInt(value);

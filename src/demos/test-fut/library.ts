@@ -1,4 +1,10 @@
-import { gp_Pnt, OpenCascadeInstance } from "opencascade.js";
+import {
+  gp_Ax1_1,
+  gp_Ax2,
+  gp_Pnt,
+  OpenCascadeInstance,
+  TopoDS_Shape,
+} from "opencascade.js";
 import {
   AmbientLight,
   DirectionalLight,
@@ -118,45 +124,209 @@ const setupThreeJSViewport = () => {
 };
 export { setupThreeJSViewport };
 
-export const makeFut = (openCascade: OpenCascadeInstance) => {
+const makeCircleFace = (
+  oc: OpenCascadeInstance,
+  axis: gp_Ax2,
+  radius: number
+): TopoDS_Shape => {
+  const circ = new oc.gp_Circ_2(axis, radius);
+  const edge = new oc.BRepBuilderAPI_MakeEdge_8(circ);
+  const wire = new oc.BRepLib_MakeWire_2(edge.Edge());
+  const face = new oc.BRepBuilderAPI_MakeFace_15(wire.Wire(), false);
+  const shape = face.Shape();
+  return shape;
+};
+const makeRecFace = (
+  oc: OpenCascadeInstance,
+  x: number,
+  y: number
+): TopoDS_Shape => {
+  // p3 --- p2
+  // |      |
+  // p0 --- p1
+  const p0 = new oc.gp_Pnt_3(0, 0, 0);
+  const p1 = new oc.gp_Pnt_3(x, 0, 0);
+  const p2 = new oc.gp_Pnt_3(x, y, 0);
+  const p3 = new oc.gp_Pnt_3(0, y, 0);
+  const e01 = new oc.BRepBuilderAPI_MakeEdge_3(p0, p1);
+  const e12 = new oc.BRepBuilderAPI_MakeEdge_3(p1, p2);
+  const e23 = new oc.BRepBuilderAPI_MakeEdge_3(p2, p3);
+  const e30 = new oc.BRepBuilderAPI_MakeEdge_3(p3, p0);
+
+  const wire = new oc.BRepLib_MakeWire_5(
+    e01.Edge(),
+    e12.Edge(),
+    e23.Edge(),
+    e30.Edge()
+  );
+  const face = new oc.BRepBuilderAPI_MakeFace_15(wire.Wire(), false);
+  const shape = face.Shape();
+  return shape;
+};
+
+export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
+  console.log("starting makeFut2D...");
+
+  console.log("Params : ", params);
+
+  const origin = new oc.gp_Pnt_3(0, 0, 0);
+  const dir = new oc.gp_Dir_4(0, 0, 1);
+  const axis = new oc.gp_Ax2_3(origin, dir);
+  const outerCir = makeCircleFace(oc, axis, params.D / 2);
+  const innerCir = makeCircleFace(oc, axis, params.Di / 2);
+
+  const cut = new oc.BRepAlgoAPI_Cut_3(
+    outerCir,
+    innerCir,
+    new oc.Message_ProgressRange_1()
+  );
+  let shape = cut.Shape();
+
+  const openingCutterShape = makeRecFace(oc, params.D, params.T3);
+  for (let i = 1; i <= params.nbOpenings; i++) {
+    const rot = new oc.gp_Trsf_1();
+    rot.SetRotation_1(
+      new oc.gp_Ax1_2(new oc.gp_Pnt_3(0, 0, 0), new oc.gp_Dir_4(0, 0, 1)),
+      (i * 2 * Math.PI) / params.nbOpenings
+    );
+    var cutterShape = new oc.BRepBuilderAPI_Transform_2(
+      openingCutterShape,
+      rot,
+      false
+    ).Shape();
+
+    const openingCut = new oc.BRepAlgoAPI_Cut_3(
+      shape,
+      cutterShape,
+      new oc.Message_ProgressRange_1()
+    );
+    shape = openingCut.Shape();
+  }
+
+  let gProps = new oc.GProp_GProps_1();
+  oc.BRepGProp.SurfaceProperties_1(shape, gProps, false, false);
+  let com = gProps.CentreOfMass();
+  let Mass = gProps.Mass();
+  let MomentOfInertia = gProps.MomentOfInertia(new oc.gp_Ax1_2(origin, dir));
+  let mat = gProps.MatrixOfInertia();
+  const props = {
+    com: `[${com.X()}, ${com.Y()}, ${com.Z()}]`,
+    Mass,
+    MomentOfInertia,
+  };
+
+  console.log(props);
+  let nbRow = 3;
+  console.log("MatrixOfInertia");
+  for (var i = 0; i < nbRow; i++) {
+    let row = mat.Row(i);
+    console.log(`[${row.X()}, ${row.Y()}, ${row.Z()}]`);
+  }
+  console.log("makeFut2D completed");
+  return shape;
+};
+
+export const makeFut = (oc: OpenCascadeInstance) => {
   const D = 700;
   const t = 10;
   const Di = D - 2 * t;
   const T2 = 100;
-  const T3 = 400;
+  const T3 = 200;
   const T4 = 10;
   const T5 = 200;
   const Z_DEPTH = 100;
 
-  const outerCyl = new openCascade.BRepPrimAPI_MakeCylinder_1(D / 2, Z_DEPTH);
-  const innerCyl = new openCascade.BRepPrimAPI_MakeCylinder_1(Di / 2, Z_DEPTH);
-  const cut = new openCascade.BRepAlgoAPI_Cut_3(
+  const outerCyl = new oc.BRepPrimAPI_MakeCylinder_1(D / 2, Z_DEPTH);
+  const innerCyl = new oc.BRepPrimAPI_MakeCylinder_1(Di / 2, Z_DEPTH);
+  const cut = new oc.BRepAlgoAPI_Cut_3(
     outerCyl.Shape(),
     innerCyl.Shape(),
-    new openCascade.Message_ProgressRange_1()
+    new oc.Message_ProgressRange_1()
   );
-  const cyl = cut.Shape();
-  let gProps = new openCascade.GProp_GProps_1();
-  openCascade.BRepGProp.LinearProperties(cyl, gProps, true, false);
-  console.log("GProps origin");
+  //let cyl = cut.Shape();
+  let cyl = outerCyl.Shape();
+
+  const openingCutter = new oc.BRepPrimAPI_MakeBox_2(D, T3, Z_DEPTH);
+  const transfo = new oc.gp_Trsf_1();
+  transfo.SetTranslation_1(new oc.gp_Vec_4(0, -T3 / 2, 0));
+  const openingCutterShape = new oc.BRepBuilderAPI_Transform_2(
+    openingCutter.Shape(),
+    transfo,
+    false
+  ).Shape();
+  const nbOpenings = 0;
+  for (let i = 1; i <= nbOpenings; i++) {
+    const rot = new oc.gp_Trsf_1();
+    rot.SetRotation_1(
+      new oc.gp_Ax1_2(new oc.gp_Pnt_3(0, 0, 0), new oc.gp_Dir_4(0, 0, 1)),
+      (i * 2 * Math.PI) / nbOpenings
+    );
+    var cutterShape = new oc.BRepBuilderAPI_Transform_2(
+      openingCutterShape,
+      rot,
+      false
+    ).Shape();
+
+    const openingCut = new oc.BRepAlgoAPI_Cut_3(
+      cyl,
+      cutterShape,
+      new oc.Message_ProgressRange_1()
+    );
+    cyl = openingCut.Shape();
+  }
+
+  // cyl = new openCascade.BRepAlgoAPI_Fuse_3(
+  //   cyl,
+  //   openingCutterShape,
+  //   new openCascade.Message_ProgressRange_1()
+  // ).Shape();
+
+  let gProps = new oc.GProp_GProps_1();
+
+  oc.BRepGProp.SurfaceProperties_1(cyl, gProps, false, false);
+  // console.log("GProps origin");
   let com = gProps.CentreOfMass();
-  console.log(`CentreOfMass = [${com.X()}, ${com.Y()}, ${com.Z()}]`);
-  console.log("Mass = ", gProps.Mass());
-  let Ix = 0,
-    Iy = 0,
-    Iz = 0;
-  gProps.StaticMoments(Ix, Iy, Iz);
-  console.log(`StaticMoments = [Ix = ${Ix}, Iy = ${Iy}, Iz = ${Iz}]]`);
+  // console.log(`CentreOfMass = [${com.X()}, ${com.Y()}, ${com.Z()}]`);
+  // console.log("Mass = ", gProps.Mass());
+  let Ix = 0;
+  let Iy = 0;
+  let Iz = 0;
+  // gProps.StaticMoments(Ix, Iy, Iz);
+  // console.log(`StaticMoments = [Ix = ${Ix}, Iy = ${Iy}, Iz = ${Iz}]]`);
+  // window.d = gProps;
 
   console.log("GProps at CoM");
-  gProps = new openCascade.GProp_GProps_2(com);
-  openCascade.BRepGProp.LinearProperties(cyl, gProps, true, false);
+  gProps = new oc.GProp_GProps_2(com);
+  oc.BRepGProp.LinearProperties(cyl, gProps, false, false);
   com = gProps.CentreOfMass();
   console.log(`CentreOfMass = [${com.X()}, ${com.Y()}, ${com.Z()}]`);
   console.log("Mass = ", gProps.Mass());
-  (Ix = 0), (Iy = 0), (Iz = 0);
+  Ix = 0;
+  Iy = 0;
+  Iz = 0;
   gProps.StaticMoments(Ix, Iy, Iz);
   console.log(`StaticMoments = [Ix = ${Ix}, Iy = ${Iy}, Iz = ${Iz}]]`);
+
+  const MomentOfInertiaCom = gProps.MomentOfInertia(
+    new oc.gp_Ax1_2(com, new oc.gp_Dir_4(0, 0, 1))
+  );
+  console.log("MomentOfInertiaCom =", MomentOfInertiaCom);
+
+  const MomentOfInertiaOrigin = gProps.MomentOfInertia(
+    new oc.gp_Ax1_2(new oc.gp_Pnt_3(0, 0, 0), new oc.gp_Dir_4(0, 0, 1))
+  );
+  console.log("MomentOfInertiaOrigin =", MomentOfInertiaOrigin);
+
+  const iMat = gProps.MatrixOfInertia();
+  //siMat.DumpJson(console.log);
+  console.log("MaxtrixOfInertia ");
+  let nbRow = 2;
+  let nbCol = 2;
+  for (var i = 0; i < nbRow; i++) {
+    let row = iMat.Row(i);
+    console.log(`${row.X()}, ${row.Y()}, ${row.Z()}`);
+  }
+
   return cyl;
 };
 
@@ -407,7 +577,7 @@ const makeBottle = (openCascade, myWidth, myHeight, myThickness) => {
 };
 export { makeBottle };
 
-const addShapeToScene = async (openCascade, shape, scene) => {
+const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
   openCascadeHelper.setOpenCascade(openCascade);
   const facelist = await openCascadeHelper.tessellate(shape);
   const [locVertexcoord, locNormalcoord, locTriIndices] =
@@ -430,7 +600,7 @@ const addShapeToScene = async (openCascade, shape, scene) => {
   geometry.vertices = vertices;
   geometry.faces = faces;
   const object = new Mesh(geometry, objectMat);
-  object.name = "shape";
+  object.name = name;
   object.rotation.x = -Math.PI / 2;
   scene.add(object);
 };

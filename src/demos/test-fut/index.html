@@ -22,6 +22,17 @@
       flex-basis: 0;
       flex-grow: 1;
     }
+    #controls {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 200px;
+      background-color: gray;
+      padding: 50px;
+    }
+    #refreshFut {
+      width: 100%;
+    }
   </style>
   <body>
     <!-- <div id="menu">
@@ -41,6 +52,54 @@
 			<input id="step-file" name="step-file" type="file" accept=".iges,.step,.igs,.stp" style="display:none;"/>
 			<label for="step-file" title="Load STEP from File" style="border: 1px solid gray;background-color: #ffffff;padding: 1.5px 5px 2px 5px">Load STEP/IGES</label>
 		</div> -->
+
+    <div id="controls">
+      <form id="controls-form">
+        <div>
+          <label for="title">Nb openings</label>
+          <input type="number" name="nbOpenings" id="nbOpenings" value="1" />
+        </div>
+        <div>
+          <label>D</label>
+          <div>
+            <input type="number" name="D" id="D" value="700" />
+          </div>
+        </div>
+
+        <div>
+          <label>t</label>
+          <div>
+            <input type="number" name="t" id="t" value="10" />
+          </div>
+        </div>
+        <div>
+          <label>T2</label>
+          <div>
+            <input type="number" name="T2" id="T2" value="100" />
+          </div>
+        </div>
+        <div>
+          <label>T3</label>
+          <div>
+            <input type="number" name="T3" id="T3" value="200" />
+          </div>
+        </div>
+        <div>
+          <label>T4</label>
+          <div>
+            <input type="number" name="T4" id="T4" value="10" />
+          </div>
+        </div>
+        <div>
+          <label>T5</label>
+          <div>
+            <input type="number" name="T5" id="T5" value="200" />
+          </div>
+        </div>
+
+        <button id="refreshFut">Refresh</button>
+      </form>
+    </div>
     <div id="viewport"></div>
   </body>
 </html>
