@@ -163,7 +163,20 @@ const makeRecFace = (
   const shape = face.Shape();
   return shape;
 };
-
+export interface Vec3 {
+  x: number;
+  y: number;
+  z: number;
+}
+const translate = (
+  oc: OpenCascadeInstance,
+  shape: TopoDS_Shape,
+  vec: Vec3
+): TopoDS_Shape => {
+  const translate = new oc.gp_Trsf_1();
+  translate.SetTranslation_1(new oc.gp_Vec_4(vec.x, vec.y, vec.z));
+  return new oc.BRepBuilderAPI_Transform_2(shape, translate, false).Shape();
+};
 export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
   console.log("starting makeFut2D...");
 
@@ -182,7 +195,12 @@ export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
   );
   let shape = cut.Shape();
 
-  const openingCutterShape = makeRecFace(oc, params.D, params.T3);
+  let openingCutterShape = makeRecFace(oc, params.T3, params.D);
+  openingCutterShape = translate(oc, openingCutterShape, {
+    x: -params.T3 / 2,
+    y: -params.D,
+    z: 0,
+  });
   for (let i = 1; i <= params.nbOpenings; i++) {
     const rot = new oc.gp_Trsf_1();
     rot.SetRotation_1(
@@ -195,12 +213,46 @@ export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
       false
     ).Shape();
 
-    const openingCut = new oc.BRepAlgoAPI_Cut_3(
+    shape = new oc.BRepAlgoAPI_Cut_3(
       shape,
       cutterShape,
       new oc.Message_ProgressRange_1()
-    );
-    shape = openingCut.Shape();
+    ).Shape();
+    // const openingCut = new oc.BRepAlgoAPI_Fuse_3(
+    //   shape,
+    //   cutterShape,
+    //   new oc.Message_ProgressRange_1()
+    // );
+    // shape = openingCut.Shape();
+
+    // add panels
+    // panel 1
+    let p1Shape = makeRecFace(oc, params.T4, params.T5);
+    p1Shape = translate(oc, p1Shape, {
+      x: params.T3 / 2,
+      y: -params.D / 2 - params.T2,
+      z: 0,
+    });
+    p1Shape = new oc.BRepBuilderAPI_Transform_2(p1Shape, rot, false).Shape();
+    shape = new oc.BRepAlgoAPI_Fuse_3(
+      shape,
+      p1Shape,
+      new oc.Message_ProgressRange_1()
+    ).Shape();
+
+    // panel 2
+    let p2Shape = makeRecFace(oc, params.T4, params.T5);
+    p2Shape = translate(oc, p2Shape, {
+      x: -params.T3 / 2,
+      y: -params.D / 2 - params.T2,
+      z: 0,
+    });
+    p2Shape = new oc.BRepBuilderAPI_Transform_2(p2Shape, rot, false).Shape();
+    shape = new oc.BRepAlgoAPI_Fuse_3(
+      shape,
+      p2Shape,
+      new oc.Message_ProgressRange_1()
+    ).Shape();
   }
 
   let gProps = new oc.GProp_GProps_1();
