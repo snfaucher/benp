@@ -42,17 +42,31 @@ initOpenCascade().then((openCascade) => {
   //let bottle = makeBottle(openCascade, width, height, thickness);
   const name = "fut-shape";
 
-  const cyl = makeFut2D(openCascade, getParams());
-  addShapeToScene(openCascade, cyl, scene, name);
-  console.log("Cyl added to scene.");
+  const { shape, Ixx, Iyy, bbXMax, bbYMax } = makeFut2D(
+    openCascade,
+    getParams()
+  );
+  addShapeToScene(openCascade, shape, scene, name);
+  document.getElementById("Ixx").value = Ixx;
+  document.getElementById("Iyy").value = Iyy;
+  document.getElementById("bbXMax").value = bbXMax;
+  document.getElementById("bbYMax").value = bbYMax;
+  console.log("Shape added to scene.");
   document.getElementById("controls-form").addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     document.getElementById("refreshFut");
     scene.remove(scene.getObjectByName(name));
-    const cyl = makeFut2D(openCascade, getParams());
-    addShapeToScene(openCascade, cyl, scene, name);
+    const { shape, Ixx, Iyy, bbXMax, bbYMax } = makeFut2D(
+      openCascade,
+      getParams()
+    );
+    addShapeToScene(openCascade, shape, scene, name);
+    document.getElementById("Ixx").value = Ixx;
+    document.getElementById("Iyy").value = Iyy;
+    document.getElementById("bbXMax").value = bbXMax;
+    document.getElementById("bbYMax").value = bbYMax;
   });
 
   // window.changeSliderWidth = (value) => {

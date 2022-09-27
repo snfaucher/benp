@@ -177,7 +177,17 @@ const translate = (
   translate.SetTranslation_1(new oc.gp_Vec_4(vec.x, vec.y, vec.z));
   return new oc.BRepBuilderAPI_Transform_2(shape, translate, false).Shape();
 };
-export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
+export interface ResultShape {
+  shape: TopoDS_Shape;
+  Ixx: number;
+  Iyy: number;
+  bbXMax: number;
+  bbYMax: number;
+}
+export const makeFut2D = (
+  oc: OpenCascadeInstance,
+  params: any
+): ResultShape => {
   console.log("starting makeFut2D...");
 
   console.log("Params : ", params);
@@ -267,6 +277,17 @@ export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
     MomentOfInertia,
   };
 
+  // bounding box
+  const bb = new oc.Bnd_Box_1();
+  oc.BRepBndLib.Add(shape, bb, true);
+  let xMin,
+    xMax,
+    yMin,
+    yMax,
+    zMin,
+    zMax = 0;
+  bb.Get(xMin, xMax, yMin, yMax, zMin, zMax);
+
   console.log(props);
   let nbRow = 3;
   console.log("MatrixOfInertia");
@@ -275,7 +296,13 @@ export const makeFut2D = (oc: OpenCascadeInstance, params: any) => {
     console.log(`[${row.X()}, ${row.Y()}, ${row.Z()}]`);
   }
   console.log("makeFut2D completed");
-  return shape;
+  return {
+    shape,
+    Ixx: mat.Row(1).X(),
+    Iyy: mat.Row(2).Y(),
+    bbXMax: xMax,
+    bbYMax: yMax,
+  };
 };
 
 export const makeFut = (oc: OpenCascadeInstance) => {
