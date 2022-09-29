@@ -19,10 +19,21 @@
       position: absolute;
       right: 0;
       top: 0;
-      width: 200px;
+      width: 400px;
       background-color: gray;
       padding: 50px;
+      display: flex;
+      flex-direction: row;
+    }
+    #controls-form {
+      display: flex;
+      flex-direction: column;
+      padding-right: 20px;
+    }
+    #controls-results {
+      display: flex;
+      flex-direction: column;
     }
     #refreshFut {
       width: 100%;
-    }</style><body><div id="controls"><form id="controls-form"><div><label for="title">Nb openings</label> <input type="number" step="1" name="nbOpenings" id="nbOpenings" value="1" min="0"/></div><div><label>D</label><div><input type="number" step="0.0001" name="D" id="D" value="700" min="0"/></div></div><div><label>t</label><div><input type="number" step="0.0001" name="t" id="t" value="10" min="0"/></div></div><div><label>T1</label><div><input type="number" step="0.0001" name="T1" id="T1" value="100" min="0"/></div></div><div><label>T3</label><div><input type="number" step="0.0001" name="T3" id="T3" value="200" min="0"/></div></div><div><label>T4</label><div><input type="number" step="0.0001" name="T4" id="T4" value="10" min="0"/></div></div><div><label>T5</label><div><input type="number" step="0.0001" name="T5" id="T5" value="200" min="0"/></div></div><div><label>Theta (deg)</label><div><input type="number" step="0.0001" name="theta" id="theta" value="0" min="0"/></div></div><button id="refreshFut">Refresh</button></form><label style="margin-top: 20px">Résultats</label><div><label>Ixx</label><div><input type="number" name="Ixx" id="Ixx" value="0" readonly="readonly"/></div></div><div><label>Iyy</label><div><input type="number" name="Iyy" id="Iyy" value="0" readonly="readonly"/></div></div><div><label>bbXMax</label><div><input type="number" name="bbXMax" id="bbXMax" value="0" readonly="readonly"/></div></div><div><label>bbYMax</label><div><input type="number" name="bbYMax" id="bbYMax" value="0" readonly="readonly"/></div></div><div><label>Aire</label><div><input type="number" name="area" id="area" value="0" readonly="readonly"/></div></div></div><div id="viewport"></div></body></html>
+    }</style><body><div id="controls"><form id="controls-form"><div><label for="title">Nb openings</label> <input type="number" step="1" name="nbOpenings" id="nbOpenings" value="1" min="0"/></div><div><label>D</label><div><input type="number" step="0.0001" name="D" id="D" value="700" min="0"/></div></div><div><label>t</label><div><input type="number" step="0.0001" name="t" id="t" value="10" min="0"/></div></div><div><label>T1</label><div><input type="number" step="0.0001" name="T1" id="T1" value="100" min="0"/></div></div><div><label>T3</label><div><input type="number" step="0.0001" name="T3" id="T3" value="200" min="0"/></div></div><div><label>T4</label><div><input type="number" step="0.0001" name="T4" id="T4" value="10" min="0"/></div></div><div><label>T5</label><div><input type="number" step="0.0001" name="T5" id="T5" value="200" min="0"/></div></div><div><label>Theta (deg)</label><div><input type="number" step="0.0001" name="theta" id="theta" value="0" min="0"/></div></div><button id="refreshFut">Refresh</button></form><div id="controls-results"><label>Résultats</label><div><label>Ixx</label><div><input type="number" name="Ixx" id="Ixx" value="0" readonly="readonly"/></div></div><div><label>Iyy</label><div><input type="number" name="Iyy" id="Iyy" value="0" readonly="readonly"/></div></div><div><label>Aire</label><div><input type="number" name="area" id="area" value="0" readonly="readonly"/></div></div><div><label>Centre de gravité</label><div><textarea type="text" name="com" id="com" value="0" readonly="readonly" rows="4"></textarea></div></div><div><label>levierX</label><div><input type="number" name="levierX" id="levierX" value="0" readonly="readonly"/></div></div><div><label>levierY</label><div><input type="number" name="levierY" id="levierY" value="0" readonly="readonly"/></div></div><div><label>Sx</label><div><input type="number" name="Sx" id="Sx" value="0" readonly="readonly"/></div></div><div><label>Sy</label><div><input type="number" name="Sy" id="Sy" value="0" readonly="readonly"/></div></div><div><label>bbXMin</label><div><input type="number" name="bbXMin" id="bbXMin" value="0" readonly="readonly"/></div></div><div><label>bbXMax</label><div><input type="number" name="bbXMax" id="bbXMax" value="0" readonly="readonly"/></div></div><div><label>bbYMin</label><div><input type="number" name="bbYMin" id="bbYMin" value="0" readonly="readonly"/></div></div><div><label>bbYMax</label><div><input type="number" name="bbYMax" id="bbYMax" value="0" readonly="readonly"/></div></div></div></div><div id="viewport"></div></body></html>
