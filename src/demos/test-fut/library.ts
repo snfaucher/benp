@@ -111,14 +111,15 @@ const setupThreeJSViewport = () => {
   directionalLight.position.set(0.5, 0.5, 0.5);
   scene.add(directionalLight);
 
-  camera.position.set(-50, 350, 400);
+  camera.position.set(0, 500, 0);
 
   const axesHelper = new AxesHelper(200);
   scene.add(axesHelper);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.screenSpacePanning = true;
-  controls.target.set(0, 350, 0);
+  controls.target.set(0, 0, 0);
+
   controls.update();
 
   function animate() {

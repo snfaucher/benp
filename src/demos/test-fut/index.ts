@@ -92,7 +92,7 @@ initOpenCascade().then((openCascade) => {
   const geometry = new SphereGeometry(10, 32, 32);
   const material = new MeshBasicMaterial({ color: "#FF0000" });
   comObj = new Mesh(geometry, material);
-  comObj.position.set(com[0], com[1], com[2]);
+  comObj.position.set(com[0], com[2], -com[1]);
   scene.add(comObj);
 
   updateResult([
@@ -146,7 +146,7 @@ initOpenCascade().then((openCascade) => {
     const geometry = new SphereGeometry(10, 32, 32);
     const material = new MeshBasicMaterial({ color: "#FF0000" });
     comObj = new Mesh(geometry, material);
-    comObj.position.set(com[0], com[1], 0);
+    comObj.position.set(com[0], com[2], -com[1]);
     scene.add(comObj);
     updateResult([
       { id: "Ixx", val: Ixx },
