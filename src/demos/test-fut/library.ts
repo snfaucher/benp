@@ -1,6 +1,8 @@
 import { gp_Ax2, OpenCascadeInstance, TopoDS_Shape } from "opencascade.js";
 import {
   AmbientLight,
+  AxesHelper,
+  BoxHelper,
   Color,
   DirectionalLight,
   Geometry,
@@ -107,6 +109,9 @@ const setupThreeJSViewport = () => {
   scene.add(directionalLight);
 
   camera.position.set(-50, 350, 400);
+
+  const axesHelper = new AxesHelper(200);
+  scene.add(axesHelper);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.screenSpacePanning = true;
@@ -704,4 +709,5 @@ const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
   object.name = name;
   object.rotation.x = -Math.PI / 2;
   scene.add(object);
+  //scene.add(new BoxHelper(object, 0xffff00));
 };
