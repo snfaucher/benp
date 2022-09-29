@@ -1,22 +1,17 @@
-import {
-  gp_Ax1_1,
-  gp_Ax2,
-  gp_Pnt,
-  OpenCascadeInstance,
-  TopoDS_Shape,
-} from "opencascade.js";
+import { gp_Ax2, OpenCascadeInstance, TopoDS_Shape } from "opencascade.js";
 import {
   AmbientLight,
-  DirectionalLight,
-  PerspectiveCamera,
-  Scene,
-  WebGLRenderer,
   Color,
+  DirectionalLight,
   Geometry,
   Mesh,
   MeshStandardMaterial,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { FutParams } from ".";
 import openCascadeHelper from "../../common/openCascadeHelper";
 
 const loadFileAsync = (file) => {
@@ -86,6 +81,9 @@ const loadSTEPorIGES = async (openCascade, inputFile, addFunction, scene) => {
   });
 };
 export { loadSTEPorIGES };
+export { setupThreeJSViewport };
+export { makeBottle };
+export { addShapeToScene };
 
 const setupThreeJSViewport = () => {
   var scene = new Scene();
@@ -122,7 +120,6 @@ const setupThreeJSViewport = () => {
   animate();
   return scene;
 };
-export { setupThreeJSViewport };
 
 const makeCircleFace = (
   oc: OpenCascadeInstance,
@@ -177,6 +174,27 @@ const translate = (
   translate.SetTranslation_1(new oc.gp_Vec_4(vec.x, vec.y, vec.z));
   return new oc.BRepBuilderAPI_Transform_2(shape, translate, false).Shape();
 };
+
+const rotate = (
+  oc: OpenCascadeInstance,
+  shape: TopoDS_Shape,
+  point: Vec3,
+  dir: Vec3,
+  radAngle: number
+): TopoDS_Shape => {
+  const rot = new oc.gp_Trsf_1();
+  rot.SetRotation_1(
+    new oc.gp_Ax1_2(
+      new oc.gp_Pnt_3(point.x, point.y, point.z),
+      new oc.gp_Dir_4(dir.x, dir.y, dir.z)
+    ),
+    radAngle
+  );
+  return new oc.BRepBuilderAPI_Transform_2(shape, rot, false).Shape();
+};
+const degToRad = (deg: number): number => (2 * Math.PI * deg) / 360;
+const radToDeg = (rad: number): number => (360 * rad) / (2 * Math.PI);
+
 export interface ResultShape {
   shape: TopoDS_Shape;
   Ixx: number;
@@ -186,7 +204,7 @@ export interface ResultShape {
 }
 export const makeFut2D = (
   oc: OpenCascadeInstance,
-  params: any
+  params: FutParams
 ): ResultShape => {
   console.log("starting makeFut2D...");
 
@@ -228,12 +246,6 @@ export const makeFut2D = (
       cutterShape,
       new oc.Message_ProgressRange_1()
     ).Shape();
-    // const openingCut = new oc.BRepAlgoAPI_Fuse_3(
-    //   shape,
-    //   cutterShape,
-    //   new oc.Message_ProgressRange_1()
-    // );
-    // shape = openingCut.Shape();
 
     // add panels
     // panel 1
@@ -263,6 +275,17 @@ export const makeFut2D = (
       p2Shape,
       new oc.Message_ProgressRange_1()
     ).Shape();
+  }
+
+  // rotate shape
+  if (params.theta != 0) {
+    shape = rotate(
+      oc,
+      shape,
+      { x: 0, y: 0, z: 0 },
+      { x: 0, y: 0, z: 1 },
+      degToRad(params.theta)
+    );
   }
 
   let gProps = new oc.GProp_GProps_1();
@@ -654,7 +677,6 @@ const makeBottle = (openCascade, myWidth, myHeight, myThickness) => {
 
   return aRes;
 };
-export { makeBottle };
 
 const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
   openCascadeHelper.setOpenCascade(openCascade);
@@ -683,4 +705,3 @@ const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
   object.rotation.x = -Math.PI / 2;
   scene.add(object);
 };
-export { addShapeToScene };

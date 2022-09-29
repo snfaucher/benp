@@ -1,17 +1,21 @@
-import initOpenCascade, { StepRepr_MakeFromUsageOption } from "opencascade.js";
+import initOpenCascade from "opencascade.js";
 
-import {
-  loadSTEPorIGES,
-  makeBottle,
-  makeFut,
-  setupThreeJSViewport,
-  addShapeToScene,
-  makeFut2D,
-} from "./library";
+import { addShapeToScene, makeFut2D, setupThreeJSViewport } from "./library";
 
 const scene = setupThreeJSViewport();
-
-const getParams = (): object => {
+export interface FutParams {
+  D: number;
+  t: number;
+  Di: number;
+  T1: number;
+  T2: number;
+  T3: number;
+  T4: number;
+  T5: number;
+  nbOpenings: number;
+  theta: number; // deg
+}
+const getParams = (): FutParams => {
   const nbOpenings = parseInt(document.querySelector("#nbOpenings").value) || 0;
   const D = parseInt(document.querySelector("#D").value) || 0;
   const t = parseInt(document.querySelector("#t").value) || 0;
@@ -19,17 +23,20 @@ const getParams = (): object => {
   const T3 = parseInt(document.querySelector("#T3").value) || 0;
   const T4 = parseInt(document.querySelector("#T4").value) || 0;
   const T5 = parseInt(document.querySelector("#T5").value) || 0;
+  const theta = parseInt(document.querySelector("#theta").value) || 0;
 
   const Di = D - 2 * t;
-  const params = {
+  const params: FutParams = {
     nbOpenings,
     D,
     t,
     Di,
+    T1: 0,
     T2,
     T3,
     T4,
     T5,
+    theta,
   };
   return params;
 };
