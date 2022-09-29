@@ -5,11 +5,14 @@ import {
   BoxHelper,
   Color,
   DirectionalLight,
+  FontLoader,
   Geometry,
   Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
   Scene,
+  TextGeometry,
   WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -123,6 +126,33 @@ const setupThreeJSViewport = () => {
     renderer.render(scene, camera);
   }
   animate();
+
+  // const loader = new FontLoader();
+
+  // loader.load("Helvetica_Regular.json", function (font) {
+  //   const geometry = new TextGeometry("Hello three.js!", {
+  //     font: font,
+  //     size: 80,
+  //     height: 5,
+  //     curveSegments: 12,
+  //     bevelEnabled: true,
+  //     bevelThickness: 10,
+  //     bevelSize: 8,
+  //     bevelOffset: 0,
+  //     bevelSegments: 5,
+  //   });
+  //   var color = new Color();
+  //   color.setRGB(255, 250, 250);
+  //   var textMaterial = new MeshBasicMaterial({ color: color });
+  //   var text = new Mesh(geometry, textMaterial);
+
+  //   text.position.x = axesHelper.position.x;
+  //   text.position.y = axesHelper.position.y;
+  //   text.position.z = axesHelper.position.z;
+  //   text.setRotationFromEuler(camera.rotation);
+  //   scene.add(text);
+  // });
+
   return scene;
 };
 
@@ -204,8 +234,16 @@ export interface ResultShape {
   shape: TopoDS_Shape;
   Ixx: number;
   Iyy: number;
+  bbXMin: number;
   bbXMax: number;
+  bbYMin: number;
   bbYMax: number;
+  levierX: number;
+  levierY: number;
+  area: number;
+  com: [number, number, number];
+  Sx: number;
+  Sy: number;
 }
 export const makeFut2D = (
   oc: OpenCascadeInstance,
@@ -257,7 +295,7 @@ export const makeFut2D = (
     let p1Shape = makeRecFace(oc, params.T4, params.T5);
     p1Shape = translate(oc, p1Shape, {
       x: params.T3 / 2,
-      y: -params.D / 2 - params.T2,
+      y: -params.D / 2 - params.T1,
       z: 0,
     });
     p1Shape = new oc.BRepBuilderAPI_Transform_2(p1Shape, rot, false).Shape();
@@ -270,8 +308,8 @@ export const makeFut2D = (
     // panel 2
     let p2Shape = makeRecFace(oc, params.T4, params.T5);
     p2Shape = translate(oc, p2Shape, {
-      x: -params.T3 / 2,
-      y: -params.D / 2 - params.T2,
+      x: -(params.T3 / 2 + params.T4),
+      y: -params.D / 2 - params.T1,
       z: 0,
     });
     p2Shape = new oc.BRepBuilderAPI_Transform_2(p2Shape, rot, false).Shape();
@@ -308,13 +346,14 @@ export const makeFut2D = (
   // bounding box
   const bb = new oc.Bnd_Box_1();
   oc.BRepBndLib.Add(shape, bb, true);
-  let xMin,
-    xMax,
-    yMin,
-    yMax,
-    zMin,
-    zMax = 0;
-  bb.Get(xMin, xMax, yMin, yMax, zMin, zMax);
+  let x0 = { current: 0 };
+  let x1 = { current: 0 };
+  let y0 = { current: 0 };
+  let y1 = { current: 0 };
+  let z0 = { current: 0 };
+  let z1 = { current: 0 };
+  // @ts-ignore
+  bb.Get(x0, y0, z0, x1, y1, z1);
 
   console.log(props);
   let nbRow = 3;
@@ -324,12 +363,24 @@ export const makeFut2D = (
     console.log(`[${row.X()}, ${row.Y()}, ${row.Z()}]`);
   }
   console.log("makeFut2D completed");
+  const Ixx = mat.Row(1).X();
+  const Iyy = mat.Row(2).Y();
+  const levierX = x1.current - com.X();
+  const levierY = y1.current - com.Y();
   return {
     shape,
-    Ixx: mat.Row(1).X(),
-    Iyy: mat.Row(2).Y(),
-    bbXMax: xMax,
-    bbYMax: yMax,
+    Ixx,
+    Iyy,
+    bbXMin: x0.current,
+    bbXMax: x1.current,
+    bbYMin: y0.current,
+    bbYMax: y1.current,
+    levierX,
+    levierY,
+    area: Mass,
+    com: [com.X(), com.Y(), com.Z()],
+    Sx: Ixx / Math.abs(levierX),
+    Sy: Iyy / Math.abs(levierY),
   };
 };
 
@@ -337,7 +388,7 @@ export const makeFut = (oc: OpenCascadeInstance) => {
   const D = 700;
   const t = 10;
   const Di = D - 2 * t;
-  const T2 = 100;
+  const T1 = 100;
   const T3 = 200;
   const T4 = 10;
   const T5 = 200;
