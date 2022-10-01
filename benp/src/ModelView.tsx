@@ -1,21 +1,15 @@
 import {
-  AppBar,
   Box,
   CssBaseline,
   Divider,
   Drawer,
   Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React from "react";
 import ModelViewForm from "./ModelViewForm";
 import ModelViewResult from "./ModelViewResult";
+import Viewer from "./Viewer";
 
 const drawerWidth = 500;
 
@@ -54,6 +48,7 @@ export default function ModelView() {
           </Grid>
         </Grid>
       </Drawer>
+      <Viewer />
     </Box>
   );
 }
