@@ -81,6 +81,8 @@ initOpenCascade().then((openCascade) => {
     com,
     levierX,
     levierY,
+    Sx,
+    Sy,
   } = makeFut2D(openCascade, getParams());
   addShapeToScene(openCascade, shape, scene, name);
 
@@ -105,6 +107,8 @@ initOpenCascade().then((openCascade) => {
     { id: "bbYMax", val: bbYMax },
     { id: "levierX", val: levierX },
     { id: "levierY", val: levierY },
+    { id: "Sx", val: Sx },
+    { id: "Sy", val: Sy },
     { id: "com", val: `[${com.join(",")}]` },
   ]);
   console.log("Shape added to scene.");
@@ -134,6 +138,8 @@ initOpenCascade().then((openCascade) => {
       com,
       levierX,
       levierY,
+      Sx,
+      Sy,
     } = makeFut2D(openCascade, getParams());
 
     addShapeToScene(openCascade, shape, scene, name);
@@ -158,6 +164,8 @@ initOpenCascade().then((openCascade) => {
       { id: "bbYMax", val: bbYMax },
       { id: "levierX", val: levierX },
       { id: "levierY", val: levierY },
+      { id: "Sx", val: Sx },
+      { id: "Sy", val: Sy },
       { id: "com", val: `[${com.join(",")}]` },
     ]);
   }

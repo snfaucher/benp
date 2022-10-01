@@ -366,8 +366,10 @@ export const makeFut2D = (
   console.log("makeFut2D completed");
   const Ixx = mat.Row(1).X();
   const Iyy = mat.Row(2).Y();
-  const levierX = x1.current - com.X();
-  const levierY = y1.current - com.Y();
+  const levierX =
+    Math.max(Math.abs(y1.current), Math.abs(y0.current)) - com.Y();
+  const levierY =
+    Math.max(Math.abs(x1.current), Math.abs(x0.current)) - com.X();
   return {
     shape,
     Ixx,
