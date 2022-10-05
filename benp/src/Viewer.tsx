@@ -1,17 +1,12 @@
 import { createRoot } from "react-dom/client";
 import React, { useRef, useState } from "react";
-import {
-  Canvas,
-  ThreeElements,
-  useFrame,
-  PerspectiveCamera,
-} from "@react-three/fiber";
+import { Canvas, ThreeElements, useFrame } from "@react-three/fiber";
 
 export default function Viewer() {
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
-    <Canvas>
-      <ambientLight />
+    <Canvas style={{ backgroundColor: "#202020", height: "100vh" }}>
+      <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
       <Box position={[-1.2, 0, 0]} />
       <Box position={[1.2, 0, 0]} />

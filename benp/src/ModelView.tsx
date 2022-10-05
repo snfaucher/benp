@@ -17,38 +17,40 @@ export default function ModelView() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
-      >
-        <Toolbar />
-      </Box>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-      >
-        <Toolbar>
-          <Typography variant="body1">Paramètres du fût</Typography>
-        </Toolbar>
-        <Divider />
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
-            <ModelViewForm />
-          </Grid>
-          <Grid item xs={6}>
-            <ModelViewResult />
-          </Grid>
+      <Divider />
+      <Grid container>
+        <Grid item sm={8}>
+          <Viewer />
         </Grid>
-      </Drawer>
-      <Viewer />
+        <Grid item sm={4}>
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              // flexShrink: 0,
+              // "& .MuiBox-paper": {
+              //   width: drawerWidth,
+              //   boxSizing: "border-box",
+              // },
+            }}
+            // variant="permanent"
+            // anchor="right"
+          >
+            <Toolbar>
+              <Typography variant="body1">Paramètres du fût</Typography>
+            </Toolbar>
+            <Divider />
+            <Grid container spacing={1}>
+              <Grid item xs={6}>
+                <ModelViewForm />
+              </Grid>
+              <Grid item xs={6}>
+                <ModelViewResult />
+              </Grid>
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

@@ -335,11 +335,20 @@ export const makeFut2D = (
   let gProps = new oc.GProp_GProps_1();
   oc.BRepGProp.SurfaceProperties_1(shape, gProps, false, false);
   let com = gProps.CentreOfMass();
+
+  // move shape to CoM
+  shape = translate(oc, shape, { x: -com.X(), y: -com.Y(), z: -com.Z() });
+  gProps = new oc.GProp_GProps_1();
+  oc.BRepGProp.SurfaceProperties_1(shape, gProps, false, false);
+  com = gProps.CentreOfMass();
+
   let Mass = gProps.Mass();
-  let MomentOfInertia = gProps.MomentOfInertia(new oc.gp_Ax1_2(origin, dir));
+  let MomentOfInertia = gProps.MomentOfInertia(new oc.gp_Ax1_2(com, dir));
   let mat = gProps.MatrixOfInertia();
   const props = {
-    com: `[${com.X()}, ${com.Y()}, ${com.Z()}]`,
+    com: `[${com.X().toFixed(4)}, ${com.Y().toFixed(4)}, ${com
+      .Z()
+      .toFixed(4)}]`,
     Mass,
     MomentOfInertia,
   };
@@ -366,10 +375,8 @@ export const makeFut2D = (
   console.log("makeFut2D completed");
   const Ixx = mat.Row(1).X();
   const Iyy = mat.Row(2).Y();
-  const levierX =
-    Math.max(Math.abs(y1.current), Math.abs(y0.current)) - com.Y();
-  const levierY =
-    Math.max(Math.abs(x1.current), Math.abs(x0.current)) - com.X();
+  const levierX = Math.max(Math.abs(y1.current), Math.abs(y0.current));
+  const levierY = Math.max(Math.abs(x1.current), Math.abs(x0.current));
   return {
     shape,
     Ixx,
@@ -381,7 +388,8 @@ export const makeFut2D = (
     levierX,
     levierY,
     area: Mass,
-    com: [com.X(), com.Y(), com.Z()],
+    // @ts-ignore
+    com: [com.X().toFixed(4), com.Y().toFixed(4), com.Z().toFixed(4)],
     Sx: Ixx / Math.abs(levierX),
     Sy: Iyy / Math.abs(levierY),
   };
