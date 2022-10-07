@@ -1,15 +1,11 @@
-import {
-  gp_Ax2,
-  gp_Dir,
-  OpenCascadeInstance,
-  TopoDS_Shape,
-} from "opencascade.js";
+import { gp_Ax2, OpenCascadeInstance, TopoDS_Shape } from "opencascade.js";
 import {
   AmbientLight,
   AxesHelper,
+  BufferAttribute,
+  BufferGeometry,
   Color,
   DirectionalLight,
-  Geometry,
   Mesh,
   MeshStandardMaterial,
   PerspectiveCamera,
@@ -17,8 +13,8 @@ import {
   WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FutParams } from ".";
-import openCascadeHelper from "../../common/openCascadeHelper";
+import { FutParams } from "./oc";
+import openCascadeHelper from "./openCascadeHelper";
 
 // const loadFileAsync = (file) => {
 //   return new Promise((resolve, reject) => {
@@ -131,32 +127,6 @@ const setupThreeJSViewport = () => {
   }
   animate();
 
-  // const loader = new FontLoader();
-
-  // loader.load("Helvetica_Regular.json", function (font) {
-  //   const geometry = new TextGeometry("Hello three.js!", {
-  //     font: font,
-  //     size: 80,
-  //     height: 5,
-  //     curveSegments: 12,
-  //     bevelEnabled: true,
-  //     bevelThickness: 10,
-  //     bevelSize: 8,
-  //     bevelOffset: 0,
-  //     bevelSegments: 5,
-  //   });
-  //   var color = new Color();
-  //   color.setRGB(255, 250, 250);
-  //   var textMaterial = new MeshBasicMaterial({ color: color });
-  //   var text = new Mesh(geometry, textMaterial);
-
-  //   text.position.x = axesHelper.position.x;
-  //   text.position.y = axesHelper.position.y;
-  //   text.position.z = axesHelper.position.z;
-  //   text.setRotationFromEuler(camera.rotation);
-  //   scene.add(text);
-  // });
-
   return scene;
 };
 
@@ -238,26 +208,16 @@ export interface ResultShape {
   shape: TopoDS_Shape;
   Ixx: number;
   Iyy: number;
-  Sx: number;
-  Sy: number;
-  area: number;
-  // bbXMin: number;
-  // bbXMax: number;
-  // bbYMin: number;
-  // bbYMax: number;
+  bbXMin: number;
+  bbXMax: number;
+  bbYMin: number;
+  bbYMax: number;
   levierX: number;
   levierY: number;
-  // com: [number, number, number];
-  IxxFut: number;
-  IyyFut: number;
-  SxFut: number;
-  SyFut: number;
-  areaFut: number;
-  levierXFut: number;
-  levierYFut: number;
-  AreaRatio: number;
-  SxRatio: number;
-  SyRatio: number;
+  area: number;
+  com: [number, number, number];
+  Sx: number;
+  Sy: number;
 }
 export const makeFut2D = (
   oc: OpenCascadeInstance,
@@ -278,8 +238,7 @@ export const makeFut2D = (
     innerCir,
     new oc.Message_ProgressRange_1()
   );
-  let originalShape = cut.Shape();
-  let shape = originalShape;
+  let shape = cut.Shape();
 
   let openingCutterShape = makeRecFace(oc, params.T3, params.D);
   openingCutterShape = translate(oc, openingCutterShape, {
@@ -345,45 +304,7 @@ export const makeFut2D = (
       degToRad(params.theta)
     );
   }
-  const {
-    Ixx = 0,
-    Iyy = 0,
-    levierX = 0,
-    levierY = 0,
-    area = 0,
-    Sx = 0,
-    Sy = 0,
-  } = getShapeProps(oc, shape, dir);
-  const origProps = getShapeProps(oc, originalShape, dir);
-  return {
-    shape,
-    // @ts-ignore
-    //com: [com.X().toFixed(4), com.Y().toFixed(4), com.Z().toFixed(4)],
-    Ixx,
-    Iyy,
-    levierX,
-    levierY,
-    area,
-    Sx,
-    Sy,
-    IxxFut: origProps.Ixx,
-    IyyFut: origProps.Iyy,
-    levierXFut: origProps.levierX,
-    levierYFut: origProps.levierY,
-    areaFut: origProps.area,
-    SxFut: origProps.Sx,
-    SyFut: origProps.Sy,
-    AreaRatio: area / origProps.area,
-    SxRatio: Sx / origProps.Sx,
-    SyRatio: Sy / origProps.Sy,
-  };
-};
 
-const getShapeProps = (
-  oc: OpenCascadeInstance,
-  shape: TopoDS_Shape,
-  dir: gp_Dir
-): { [k: string]: number } => {
   let gProps = new oc.GProp_GProps_1();
   oc.BRepGProp.SurfaceProperties_1(shape, gProps, false, false);
   let com = gProps.CentreOfMass();
@@ -417,18 +338,34 @@ const getShapeProps = (
   // @ts-ignore
   bb.Get(x0, y0, z0, x1, y1, z1);
 
+  console.log(props);
   let nbRow = 3;
+  console.log("MatrixOfInertia");
   for (var i = 0; i < nbRow; i++) {
     let row = mat.Row(i);
     console.log(`[${row.X()}, ${row.Y()}, ${row.Z()}]`);
   }
+  console.log("makeFut2D completed");
   const Ixx = mat.Row(1).X();
   const Iyy = mat.Row(2).Y();
   const levierX = Math.max(Math.abs(y1.current), Math.abs(y0.current));
   const levierY = Math.max(Math.abs(x1.current), Math.abs(x0.current));
-  const Sx = Ixx / Math.abs(levierX);
-  const Sy = Iyy / Math.abs(levierY);
-  return { Ixx, Iyy, area: Mass, levierX, levierY, Sx, Sy };
+  return {
+    shape,
+    Ixx,
+    Iyy,
+    bbXMin: x0.current,
+    bbXMax: x1.current,
+    bbYMin: y0.current,
+    bbYMax: y1.current,
+    levierX,
+    levierY,
+    area: Mass,
+    // @ts-ignore
+    com: [com.X().toFixed(4), com.Y().toFixed(4), com.Z().toFixed(4)],
+    Sx: Ixx / Math.abs(levierX),
+    Sy: Iyy / Math.abs(levierY),
+  };
 };
 // @ts-ignore
 const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
@@ -440,7 +377,7 @@ const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
     (a, b) => a + b.number_of_triangles,
     0
   );
-  const [vertices, faces] = await openCascadeHelper.generateGeometry(
+  const [vertices] = await openCascadeHelper.generateGeometry(
     tot_triangle_count,
     locVertexcoord,
     locNormalcoord,
@@ -449,9 +386,11 @@ const addShapeToScene = async (openCascade, shape, scene, name = "shape") => {
   const objectMat = new MeshStandardMaterial({
     color: new Color(0.9, 0.9, 0.9),
   });
-  const geometry = new Geometry();
-  geometry.vertices = vertices;
-  geometry.faces = faces;
+  const geometry = new BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new BufferAttribute(new Float32Array(vertices), 3)
+  );
   const object = new Mesh(geometry, objectMat);
   object.name = name;
   object.rotation.x = -Math.PI / 2;

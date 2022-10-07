@@ -1,16 +1,8 @@
 import initOpenCascade from "opencascade.js";
-import {
-  CircleGeometry,
-  MeshBasicMaterial,
-  Mesh,
-  Vector3,
-  SphereGeometry,
-  Color,
-} from "three";
+import { Mesh, MeshBasicMaterial, SphereGeometry } from "three";
 
-import { addShapeToScene, makeFut2D, setupThreeJSViewport } from "./library";
+import { addShapeToScene, makeFut2D, setupThreeJSViewport } from "./oc-library";
 
-const scene = setupThreeJSViewport();
 export interface FutParams {
   D: number;
   t: number;
@@ -58,9 +50,12 @@ const getParams = (): FutParams => {
 };
 // @ts-ignore
 let comObj = undefined;
+// @ts-ignore
+let scene: any;
 export const initOc = () =>
   initOpenCascade().then((openCascade) => {
-    console.log("Open Cascade inited.");
+    scene = setupThreeJSViewport();
+
     const name = "fut-shape";
 
     interface ResVal {
@@ -69,12 +64,8 @@ export const initOc = () =>
     }
     const updateResult = (data: ResVal[]): void => {
       data.forEach(({ id, val }) => {
-        try {
-          // @ts-ignore
-          document.getElementById(id).value = val;
-        } catch (e) {
-          console.error(e);
-        }
+        // @ts-ignore
+        document.getElementById(id).value = val;
       });
     };
     const {
@@ -82,21 +73,15 @@ export const initOc = () =>
       Ixx,
       Iyy,
       area,
-      // com,
+      bbXMin,
+      bbXMax,
+      bbYMin,
+      bbYMax,
+      com,
       levierX,
       levierY,
       Sx,
       Sy,
-      IxxFut,
-      IyyFut,
-      areaFut,
-      levierXFut,
-      levierYFut,
-      SxFut,
-      SyFut,
-      AreaRatio,
-      SxRatio,
-      SyRatio,
     } = makeFut2D(openCascade, getParams());
     addShapeToScene(openCascade, shape, scene, name);
 
@@ -108,40 +93,36 @@ export const initOc = () =>
     const geometry = new SphereGeometry(10, 32, 32);
     const material = new MeshBasicMaterial({ color: "#FF0000" });
     comObj = new Mesh(geometry, material);
-    comObj.position.set(0, 0, 0);
+    comObj.position.set(com[0], com[2], -com[1]);
     scene.add(comObj);
-    // { id: "bbXMin", val: bbXMin },
-    // { id: "bbXMax", val: bbXMax },
-    // { id: "bbYMin", val: bbYMin },
-    // { id: "bbYMax", val: bbYMax },
+
     updateResult([
-      { id: "Ixx", val: Ixx.toFixed(4) },
-      { id: "Iyy", val: Iyy.toFixed(4) },
-      { id: "area", val: area.toFixed(4) },
-      { id: "levierX", val: levierX.toFixed(4) },
-      { id: "levierY", val: levierY.toFixed(4) },
-      { id: "Sx", val: Sx.toFixed(4) },
-      { id: "Sy", val: Sy.toFixed(4) },
-      { id: "IxxFut", val: IxxFut.toFixed(4) },
-      { id: "IyyFut", val: IyyFut.toFixed(4) },
-      { id: "areaFut", val: areaFut.toFixed(4) },
-      { id: "levierXFut", val: levierXFut.toFixed(4) },
-      { id: "levierYFut", val: levierYFut.toFixed(4) },
-      { id: "SxFut", val: SxFut.toFixed(4) },
-      { id: "SyFut", val: SyFut.toFixed(4) },
-      { id: "AreaRatio", val: AreaRatio.toFixed(4) },
-      { id: "SxRatio", val: SxRatio.toFixed(4) },
-      { id: "SyRatio", val: SyRatio.toFixed(4) },
-      // { id: "com", val: `[${com.join(",")}]` },
+      { id: "Ixx", val: Ixx },
+      { id: "Iyy", val: Iyy },
+      { id: "area", val: area },
+      { id: "bbXMin", val: bbXMin },
+      { id: "bbXMax", val: bbXMax },
+      { id: "bbYMin", val: bbYMin },
+      { id: "bbYMax", val: bbYMax },
+      { id: "levierX", val: levierX },
+      { id: "levierY", val: levierY },
+      { id: "Sx", val: Sx },
+      { id: "Sy", val: Sy },
+      { id: "com", val: `[${com.join(",")}]` },
     ]);
     console.log("Shape added to scene.");
     // @ts-ignore
-    const onInput = (e) => {
+    document.getElementById("controls-form").addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       refresh();
-    };
-    window.addEventListener("input", onInput);
+    });
+    // @ts-ignore
+    document.getElementById("controls-form").addEventListener("input", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      refresh();
+    });
 
     function refresh() {
       document.getElementById("refreshFut");
@@ -152,21 +133,15 @@ export const initOc = () =>
         Ixx,
         Iyy,
         area,
-        // com,
+        bbXMin,
+        bbXMax,
+        bbYMin,
+        bbYMax,
+        com,
         levierX,
         levierY,
         Sx,
         Sy,
-        IxxFut,
-        IyyFut,
-        areaFut,
-        levierXFut,
-        levierYFut,
-        SxFut,
-        SyFut,
-        AreaRatio,
-        SxRatio,
-        SyRatio,
       } = makeFut2D(openCascade, getParams());
 
       addShapeToScene(openCascade, shape, scene, name);
@@ -179,27 +154,21 @@ export const initOc = () =>
       const geometry = new SphereGeometry(10, 32, 32);
       const material = new MeshBasicMaterial({ color: "#FF0000" });
       comObj = new Mesh(geometry, material);
-      comObj.position.set(0, 0, 0);
+      comObj.position.set(com[0], com[2], -com[1]);
       scene.add(comObj);
       updateResult([
-        { id: "Ixx", val: Ixx.toFixed(4) },
-        { id: "Iyy", val: Iyy.toFixed(4) },
-        { id: "area", val: area.toFixed(4) },
-        { id: "levierX", val: levierX.toFixed(4) },
-        { id: "levierY", val: levierY.toFixed(4) },
-        { id: "Sx", val: Sx.toFixed(4) },
-        { id: "Sy", val: Sy.toFixed(4) },
-        { id: "IxxFut", val: IxxFut.toFixed(4) },
-        { id: "IyyFut", val: IyyFut.toFixed(4) },
-        { id: "areaFut", val: areaFut.toFixed(4) },
-        { id: "levierXFut", val: levierXFut.toFixed(4) },
-        { id: "levierYFut", val: levierYFut.toFixed(4) },
-        { id: "SxFut", val: SxFut.toFixed(4) },
-        { id: "SyFut", val: SyFut.toFixed(4) },
-        { id: "AreaRatio", val: AreaRatio.toFixed(4) },
-        { id: "SxRatio", val: SxRatio.toFixed(4) },
-        { id: "SyRatio", val: SyRatio.toFixed(4) },
+        { id: "Ixx", val: Ixx },
+        { id: "Iyy", val: Iyy },
+        { id: "area", val: area },
+        { id: "bbXMin", val: bbXMin },
+        { id: "bbXMax", val: bbXMax },
+        { id: "bbYMin", val: bbYMin },
+        { id: "bbYMax", val: bbYMax },
+        { id: "levierX", val: levierX },
+        { id: "levierY", val: levierY },
+        { id: "Sx", val: Sx },
+        { id: "Sy", val: Sy },
+        { id: "com", val: `[${com.join(",")}]` },
       ]);
     }
   });
-initOc();
