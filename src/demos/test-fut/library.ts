@@ -93,20 +93,32 @@ export { addShapeToScene };
 
 const setupThreeJSViewport = () => {
   var scene = new Scene();
+  scene.background = new Color(0x0b1220);
+  const viewport = document.getElementById("viewport");
+  // @ts-ignore
+  const viewportRect = viewport.getBoundingClientRect();
   var camera = new PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    viewportRect.width / viewportRect.height,
     0.1,
     10000
   );
 
   var renderer = new WebGLRenderer({ antialias: true });
-  const viewport = document.getElementById("viewport");
-  // @ts-ignore
-  const viewportRect = viewport.getBoundingClientRect();
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(viewportRect.width, viewportRect.height);
   // @ts-ignore
   viewport.appendChild(renderer.domElement);
+
+  // Keep the canvas and camera in sync with the viewport size.
+  new ResizeObserver(() => {
+    // @ts-ignore
+    const { width, height } = viewport.getBoundingClientRect();
+    if (!width || !height) return;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }).observe(viewport);
 
   const light = new AmbientLight(0x404040);
   scene.add(light);
@@ -114,7 +126,7 @@ const setupThreeJSViewport = () => {
   directionalLight.position.set(0.5, 0.5, 0.5);
   scene.add(directionalLight);
 
-  camera.position.set(0, 500, 0);
+  camera.position.set(0, 700, 0);
 
   const axesHelper = new AxesHelper(200);
   scene.add(axesHelper);

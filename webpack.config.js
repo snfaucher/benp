@@ -58,8 +58,17 @@ module.exports = {
         version,
       });
     }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "src/doc/index.html"),
+      filename: "doc/index.html",
+      chunks: [],
+      version,
+    }),
     new CopyPlugin({
-      patterns: [{ from: "./src/index.html", to: "index.html" }],
+      patterns: [
+        { from: "./src/index.html", to: "index.html" },
+        { from: "./src/assets", to: "assets" },
+      ],
     }),
   ],
   resolve: {

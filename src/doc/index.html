@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Section de fût — Documentation</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"
+    />
+    <link rel="stylesheet" href="../assets/app.css" />
+    <style>
+      .doc {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 760px);
+        gap: 40px;
+        justify-content: center;
+        padding: calc(var(--appbar-h) + 32px) 24px calc(var(--footer-h) + 48px);
+      }
+      .toc {
+        position: sticky;
+        top: calc(var(--appbar-h) + 32px);
+        align-self: start;
+        font-size: 13px;
+      }
+      .toc p {
+        margin: 0 0 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .toc a {
+        display: block;
+        padding: 5px 10px;
+        border-left: 2px solid var(--border);
+        color: #334155;
+        text-decoration: none;
+      }
+      .toc a:hover {
+        border-left-color: var(--accent);
+        color: var(--accent);
+      }
+      article {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 36px 44px;
+        line-height: 1.65;
+      }
+      article h1 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        line-height: 1.25;
+      }
+      .lead {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      article h2 {
+        margin: 40px 0 10px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+        font-size: 19px;
+        scroll-margin-top: calc(var(--appbar-h) + 16px);
+      }
+      article h3 {
+        margin: 26px 0 6px;
+        font-size: 15px;
+        scroll-margin-top: calc(var(--appbar-h) + 16px);
+      }
+      table.ref {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 13px;
+      }
+      .ref th,
+      .ref td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+      .ref thead th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .ref td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      code {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 12px;
+        background: #f1f5f9;
+        padding: 1px 5px;
+        border-radius: 4px;
+      }
+      .formula {
+        overflow-x: auto;
+        margin: 10px 0;
+        padding: 4px 16px;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .callout {
+        margin: 16px 0;
+        padding: 12px 16px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: #075985;
+        font-size: 13px;
+      }
+      .callout.warn {
+        background: var(--warn-soft);
+        color: #78350f;
+      }
+      figure {
+        margin: 16px 0;
+      }
+      figure svg {
+        width: 100%;
+        height: auto;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      figcaption {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      @media (max-width: 900px) {
+        .doc {
+          display: block;
+          padding: calc(var(--appbar-h) + 16px) 16px calc(var(--footer-h) + 32px);
+        }
+        .toc {
+          display: none;
+        }
+        article {
+          padding: 24px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="appbar">
+      <a class="brand" href="../demos/test-fut/">
+        <img src="../assets/logo.svg" alt="" />
+        <span>Section de fût<small>Propriétés géométriques</small></span>
+      </a>
+      <nav class="nav">
+        <a href="../demos/test-fut/">Calculateur</a>
+        <a href="./" aria-current="page">Documentation</a>
+      </nav>
+    </header>
+
+    <div class="doc">
+      <nav class="toc" aria-label="Sommaire">
+        <p>Sommaire</p>
+        <a href="#apercu">Aperçu</a>
+        <a href="#entrees">Paramètres d’entrée</a>
+        <a href="#geometrie">Géométrie</a>
+        <a href="#proprietes">Propriétés calculées</a>
+        <a href="#fut">Fût : formules fermées</a>
+        <a href="#section">Section modifiée</a>
+        <a href="#ratios">Ratios</a>
+        <a href="#exemple">Exemple</a>
+        <a href="#notes">Notes et limites</a>
+      </nav>
+
+      <article>
+        <h1>Documentation du calculateur</h1>
+        <p class="lead">
+          Chaque champ, sa signification et la façon dont il est calculé.
+        </p>
+
+        <h2 id="apercu">Aperçu</h2>
+        <p>
+          L’outil compare deux sections planes. Toutes les longueurs sont en millimètres.
+        </p>
+        <ul>
+          <li><strong>Fût</strong> : le tube circulaire intact, défini par \(D\) et \(t\).</li>
+          <li>
+            <strong>Section modifiée</strong> : le même tube, percé de \(n\) ouvertures. Chaque
+            ouverture est bordée de deux plaques de renfort.
+          </li>
+        </ul>
+        <p>
+          Pour chaque section, l’outil calcule l’aire, les moments d’inertie, les distances aux
+          fibres extrêmes et les modules de section. Il affiche ensuite trois ratios
+          Fût / Section.
+        </p>
+
+        <h2 id="entrees">Paramètres d’entrée</h2>
+        <table class="ref">
+          <thead>
+            <tr><th>Champ</th><th>Symbole</th><th>Unité</th><th>Rôle</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Diamètre extérieur</td><td>\(D\)</td><td>mm</td><td>Diamètre extérieur du tube.</td></tr>
+            <tr><td>Épaisseur de la paroi</td><td>\(t\)</td><td>mm</td><td>Épaisseur du tube. Diamètre intérieur : \(D_i = D - 2t\).</td></tr>
+            <tr><td>Nb openings</td><td>\(n\)</td><td>–</td><td>Nombre d’ouvertures, réparties à \(360^\circ / n\). Avec \(n = 0\), la section modifiée est le fût.</td></tr>
+            <tr><td>T1</td><td>\(T_1\)</td><td>mm</td><td>Saillie des plaques au-delà de la surface extérieure du tube.</td></tr>
+            <tr><td>T3</td><td>\(T_3\)</td><td>mm</td><td>Largeur de l’ouverture (corde coupée dans la paroi).</td></tr>
+            <tr><td>T4</td><td>\(T_4\)</td><td>mm</td><td>Épaisseur de chaque plaque de renfort.</td></tr>
+            <tr><td>T5</td><td>\(T_5\)</td><td>mm</td><td>Longueur de chaque plaque, mesurée dans l’axe de l’ouverture.</td></tr>
+            <tr><td>Theta</td><td>\(\theta\)</td><td>°</td><td>Rotation de toute la section modifiée autour de son axe, sens anti-horaire.</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="geometrie">Géométrie</h2>
+        <p>
+          Le schéma montre une ouverture à \(\theta = 0\). L’axe de l’ouverture pointe alors
+          vers \(-y\). Les épaisseurs sont exagérées pour la lisibilité.
+        </p>
+        <figure>
+          <svg viewBox="0 0 520 440" role="img" aria-label="Schéma de la section avec ses cotes">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 Z" fill="#0f172a" />
+              </marker>
+            </defs>
+            <!-- axes -->
+            <g stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4">
+              <line x1="40" y1="190" x2="420" y2="190" />
+              <line x1="220" y1="62" x2="220" y2="425" />
+            </g>
+            <g font-size="12" fill="#64748b" font-style="italic">
+              <text x="424" y="194">x</text>
+              <text x="226" y="70">y</text>
+            </g>
+            <!-- tube with opening -->
+            <path d="M244 338.07 A150 150 0 1 0 196 338.07 L196 323.87 A136 136 0 1 1 244 323.87 Z" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <!-- plates -->
+            <rect x="244" y="290" width="8" height="90" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
+            <rect x="188" y="290" width="8" height="90" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
+            <circle cx="220" cy="190" r="3" fill="#0f172a" />
+
+            <g stroke="#0f172a" stroke-width="1" fill="none">
+              <!-- D -->
+              <line x1="70" y1="190" x2="70" y2="34" stroke="#cbd5e1" />
+              <line x1="370" y1="190" x2="370" y2="34" stroke="#cbd5e1" />
+              <line x1="70" y1="42" x2="370" y2="42" marker-start="url(#arr)" marker-end="url(#arr)" />
+              <!-- t -->
+              <line x1="384" y1="190" x2="370" y2="190" marker-end="url(#arr)" />
+              <line x1="342" y1="190" x2="356" y2="190" marker-end="url(#arr)" />
+              <!-- T3 -->
+              <line x1="196" y1="330" x2="196" y2="414" stroke="#cbd5e1" />
+              <line x1="244" y1="384" x2="244" y2="414" stroke="#cbd5e1" />
+              <line x1="196" y1="408" x2="244" y2="408" marker-start="url(#arr)" marker-end="url(#arr)" />
+              <!-- T4 -->
+              <line x1="230" y1="276" x2="244" y2="276" marker-end="url(#arr)" />
+              <line x1="266" y1="276" x2="252" y2="276" marker-end="url(#arr)" />
+              <line x1="244" y1="270" x2="244" y2="290" stroke="#cbd5e1" />
+              <line x1="252" y1="270" x2="252" y2="290" stroke="#cbd5e1" />
+              <!-- T5 -->
+              <line x1="252" y1="290" x2="330" y2="290" stroke="#cbd5e1" />
+              <line x1="252" y1="380" x2="380" y2="380" stroke="#cbd5e1" />
+              <line x1="320" y1="290" x2="320" y2="380" marker-start="url(#arr)" marker-end="url(#arr)" />
+              <!-- T1 -->
+              <line x1="250" y1="337.4" x2="380" y2="337.4" stroke="#cbd5e1" />
+              <line x1="368" y1="337.4" x2="368" y2="380" marker-start="url(#arr)" marker-end="url(#arr)" />
+            </g>
+            <g font-size="14" font-weight="600" fill="#0f172a">
+              <text x="214" y="34">D</text>
+              <text x="388" y="186">t</text>
+              <text x="210" y="430">T3</text>
+              <text x="270" y="272">T4</text>
+              <text x="326" y="340">T5</text>
+              <text x="374" y="364">T1</text>
+            </g>
+            <g font-size="11" fill="#475569">
+              <text x="230" y="180">centre du tube</text>
+            </g>
+          </svg>
+          <figcaption>
+            Bleu : paroi du tube. Orange : plaques de renfort. Une ouverture et ses deux plaques. Les \(n\) ouvertures sont des copies tournées de
+            \(\varphi_k = 2\pi k / n\).
+          </figcaption>
+        </figure>
+
+        <h3>Construction exacte</h3>
+        <p>L’outil construit la section modifiée \(\Omega\) par opérations booléennes :</p>
+        <div class="formula">
+          $$\Omega = R_\theta\!\left[\left(\mathcal{A} \setminus \bigcup_{k=1}^{n} R_{\varphi_k} C\right) \cup \bigcup_{k=1}^{n} R_{\varphi_k}\left(P^{+} \cup P^{-}\right)\right]$$
+        </div>
+        <ul>
+          <li>\(\mathcal{A}\) : l’anneau \(D_i/2 \le r \le D/2\) (le fût).</li>
+          <li>\(C\) : le rectangle coupant \(|x| \le T_3/2,\ -D \le y \le 0\).</li>
+          <li>
+            \(P^{+}\) : la plaque \(T_3/2 \le x \le T_3/2 + T_4,\ -D/2 - T_1 \le y \le -D/2 - T_1 + T_5\).
+            \(P^{-}\) est son symétrique par rapport à l’axe \(y\).
+          </li>
+          <li>\(R_\alpha\) : rotation d’angle \(\alpha\) autour du centre du tube.</li>
+        </ul>
+        <p>
+          L’union fusionne les zones où les plaques recouvrent la paroi. Ces zones ne sont donc
+          comptées qu’une fois.
+        </p>
+
+        <h2 id="proprietes">Propriétés calculées</h2>
+        <p>
+          Les mêmes définitions s’appliquent au fût et à la section modifiée. L’outil évalue
+          chaque intégrale exactement sur la géométrie réelle, arcs compris.
+        </p>
+
+        <h3>Aire — « Aire (mm²) »</h3>
+        <div class="formula">$$A = \iint_{\Omega} \mathrm{d}A$$</div>
+
+        <h3>Centre de gravité</h3>
+        <div class="formula">
+          $$\bar{x} = \frac{1}{A}\iint_{\Omega} x\,\mathrm{d}A, \qquad \bar{y} = \frac{1}{A}\iint_{\Omega} y\,\mathrm{d}A$$
+        </div>
+        <p>
+          Toutes les propriétés suivantes sont prises par rapport aux axes passant par ce point,
+          parallèles à \(x\) et \(y\). Une ouverture déplace le centre de gravité de la section
+          modifiée.
+        </p>
+
+        <h3>Moments d’inertie — « Ixx », « Iyy » (mm⁴)</h3>
+        <div class="formula">
+          $$I_{xx} = \iint_{\Omega} (y - \bar{y})^2\,\mathrm{d}A, \qquad I_{yy} = \iint_{\Omega} (x - \bar{x})^2\,\mathrm{d}A$$
+        </div>
+
+        <h3>Distances aux fibres extrêmes — « Distance fibre extr. » (mm)</h3>
+        <div class="formula">
+          $$c_x = \max_{\Omega} |y - \bar{y}|, \qquad c_y = \max_{\Omega} |x - \bar{x}|$$
+        </div>
+        <p>
+          \(c_x\) sert au module \(S_x\) (flexion autour de \(x\)). \(c_y\) sert au module \(S_y\).
+        </p>
+
+        <h3>Modules de section élastiques — « Sx », « Sy » (mm³)</h3>
+        <div class="formula">$$S_x = \frac{I_{xx}}{c_x}, \qquad S_y = \frac{I_{yy}}{c_y}$$</div>
+
+        <h2 id="fut">Fût : formules fermées</h2>
+        <p>Pour le tube intact, les intégrales ont une forme fermée :</p>
+        <div class="formula">
+          $$D_i = D - 2t$$
+          $$A_{\text{fût}} = \frac{\pi}{4}\left(D^2 - D_i^2\right)$$
+          $$I_{xx,\text{fût}} = I_{yy,\text{fût}} = \frac{\pi}{64}\left(D^4 - D_i^4\right)$$
+          $$c_x = c_y = \frac{D}{2}, \qquad S_{\text{fût}} = \frac{I_{\text{fût}}}{D/2} = \frac{\pi\left(D^4 - D_i^4\right)}{32\,D}$$
+        </div>
+        <p>
+          Le centre de gravité du tube est son centre. Ces formules reproduisent les valeurs
+          affichées (voir <a href="#exemple">l’exemple</a>).
+        </p>
+
+        <h2 id="section">Section modifiée</h2>
+        <p>
+          La section modifiée n’a pas de forme fermée simple : l’outil intègre la géométrie
+          \(\Omega\) exacte. Une décomposition approchée aide à comprendre le résultat.
+        </p>
+        <h3>Aire approchée</h3>
+        <p>
+          Si chaque plaque traverse toute la paroi (\(T_1 \ge 0\) et \(T_5 - T_1 \ge t\)) :
+        </p>
+        <div class="formula">
+          $$A \approx A_{\text{fût}} + n\left(\underbrace{2\,T_4 T_5}_{\text{plaques}} - \underbrace{T_3\,t}_{\text{ouverture}} - \underbrace{2\,T_4\,t}_{\text{recouvrement}}\right)$$
+        </div>
+        <p>
+          L’écart avec la valeur exacte vient de la courbure de la paroi : les coupes sont
+          droites, la paroi est circulaire.
+        </p>
+        <h3>Inertie : théorème de Huygens</h3>
+        <p>
+          Pour des morceaux \(i\) d’aire \(A_i\), d’inertie propre \(I_i\) et de centre
+          \((x_i, y_i)\) :
+        </p>
+        <div class="formula">
+          $$\bar{y} = \frac{\sum_i A_i\, y_i}{\sum_i A_i}, \qquad I_{xx} = \sum_i \left[I_{xx,i} + A_i\,(y_i - \bar{y})^2\right]$$
+        </div>
+        <p>
+          Les ouvertures comptent avec une aire négative. Par exemple, une plaque seule a
+          \(I_{xx,i} = T_4 T_5^3 / 12\) et \(I_{yy,i} = T_5 T_4^3 / 12\). L’outil fait ce calcul
+          exactement, arcs et recouvrements compris.
+        </p>
+
+        <h2 id="ratios">Ratios</h2>
+        <div class="formula">
+          $$\text{Ratio 1} = \frac{A_{\text{fût}}}{A_{\text{section}}}, \qquad \text{Ratio 2} = \frac{S_{x,\text{fût}}}{S_{x,\text{section}}}, \qquad \text{Ratio 3} = \frac{S_{y,\text{fût}}}{S_{y,\text{section}}}$$
+        </div>
+        <ul>
+          <li>
+            <strong>Ratio ≤ 1,00</strong> (vert) : la section modifiée égale ou dépasse le fût
+            pour cette propriété. Les renforts compensent l’ouverture.
+          </li>
+          <li>
+            <strong>Ratio &gt; 1,00</strong> (ambre) : la section modifiée est plus faible que le
+            fût pour cette propriété.
+          </li>
+        </ul>
+        <div class="callout warn">
+          Un ratio sous 1,00 n’est pas garanti. Avec les valeurs par défaut, le ratio 2 vaut
+          1,0259 : l’ouverture réduit \(S_x\) plus que les plaques ne l’augmentent.
+        </div>
+
+        <h2 id="exemple">Exemple (valeurs par défaut)</h2>
+        <p>
+          \(D = 700,\ t = 10,\ n = 1,\ T_1 = 100,\ T_3 = 200,\ T_4 = 10,\ T_5 = 200,\ \theta = 0\).
+        </p>
+        <h3>Fût, à la main</h3>
+        <div class="formula">
+          $$D_i = 680, \qquad A = \frac{\pi}{4}\left(700^2 - 680^2\right) = 21\,676{,}99\ \text{mm}^2$$
+          $$I = \frac{\pi}{64}\left(700^4 - 680^4\right) = 1\,290\,322\,788{,}66\ \text{mm}^4, \qquad S = \frac{I}{350} = 3\,686\,636{,}54\ \text{mm}^3$$
+        </div>
+        <h3>Section modifiée, aire approchée</h3>
+        <div class="formula">
+          $$A \approx 21\,676{,}99 + 1 \cdot \left(2 \cdot 10 \cdot 200 - 200 \cdot 10 - 2 \cdot 10 \cdot 10\right) = 23\,476{,}99\ \text{mm}^2$$
+        </div>
+        <p>La valeur exacte affichée est 23 437,89 mm² (écart de 0,17 %).</p>
+        <table class="ref">
+          <thead>
+            <tr><th>Propriété</th><th>Fût</th><th>Section</th><th>Ratio</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A (mm²)</td><td class="num">21 676,99</td><td class="num">23 437,89</td><td class="num">0,9249</td></tr>
+            <tr><td>Sx (mm³)</td><td class="num">3 686 636,54</td><td class="num">3 593 410,75</td><td class="num">1,0259</td></tr>
+            <tr><td>Sy (mm³)</td><td class="num">3 686 636,54</td><td class="num">3 786 560,91</td><td class="num">0,9736</td></tr>
+            <tr><td>Ixx (mm⁴)</td><td class="num">1 290 322 788,66</td><td class="num">1 518 759 079,23</td><td class="num">–</td></tr>
+            <tr><td>Iyy (mm⁴)</td><td class="num">1 290 322 788,66</td><td class="num">1 325 296 317,15</td><td class="num">–</td></tr>
+            <tr><td>cₓ (mm)</td><td class="num">350,00</td><td class="num">422,65</td><td class="num">–</td></tr>
+            <tr><td>cᵧ (mm)</td><td class="num">350,00</td><td class="num">350,00</td><td class="num">–</td></tr>
+          </tbody>
+        </table>
+        <p>
+          \(I_{xx}\) augmente de 18 %, mais \(c_x\) passe de 350 à 422,65 mm : les plaques
+          dépassent du tube et le centre de gravité se déplace. \(S_x\) baisse donc, d’où
+          ratio 2 &gt; 1.
+        </p>
+
+        <h2 id="notes">Notes et limites</h2>
+        <ul>
+          <li>
+            Moteur : la géométrie est construite et intégrée avec OpenCascade
+            (<code>BRepAlgoAPI</code>, <code>BRepGProp</code>). \(c_x\) et \(c_y\) viennent de
+            la boîte englobante de la section centrée.
+          </li>
+          <li>
+            \(I_{xx}\) et \(I_{yy}\) sont pris selon les axes \(x\), \(y\) fixes, pas selon les
+            axes principaux. Avec \(\theta \ne 0\), la section tourne et les axes restent fixes.
+          </li>
+          <li>
+            Les modules affichés sont élastiques. Le module plastique \(Z\) n’est pas calculé.
+          </li>
+          <li>Le point rouge de la vue 3D marque le centre du tube, pas le centre de gravité.</li>
+        </ul>
+      </article>
+    </div>
+
+    <footer class="footer">
+      <span>Section de fût · intégration exacte de la géométrie</span>
+      <span id="version">v<%= htmlWebpackPlugin.options.version %></span>
+    </footer>
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body, { delimiters: [ { left: '$$', right: '$$', display: true }, { left: '\\(', right: '\\)', display: false } ] })"
+    ></script>
+  </body>
+</html>
