@@ -1,57 +1,214 @@
-<!doctype html><html><head><meta charset="utf-8"/><title>Test fut</title><script defer="defer" src="../../test-fut.js"></script></head><style>body {
-      margin: 0;
-      overflow: hidden;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-family: "Roboto", sans-serif;
-      /* font-family: "Roboto Thin", sans-serif;
-      font-family: "Roboto Light", sans-serif;
-      font-family: "Roboto Medium", sans-serif;
-      font-family: "Roboto Black", sans-serif; */
-    }
-    #menu {
-      flex-basis: 0;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-evenly;
-    }
-    #viewport {
-      flex-basis: 0;
-      flex-grow: 1;
-    }
-    #controls {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 550px;
-      background-color: gray;
-      padding: 50px;
-      display: flex;
-      flex-direction: row;
-    }
-    #controls-form {
-      display: flex;
-      flex-direction: column;
-      padding-right: 20px;
-    }
-    #controls-results {
-      display: flex;
-      flex-direction: column;
-    }
-    #version {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      z-index: 10;
-      padding: 4px 10px;
-      font-size: 12px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.6);
-    }
-    #refreshFut {
-      width: 100%;
-    }
-    label {
-      font-size: 0.9em;
-    }</style><link href="http://fonts.cdnfonts.com/css/roboto" rel="stylesheet"/><body><div id="controls"><form style="margin-right: 15px"><label>Propriétés du fût</label><div style="margin-top: 30px"><label>Aire (mm^2)</label><div><input type="number" name="areaFut" id="areaFut" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Sx (mm^3)</label><div><input type="number" name="SxFut" id="SxFut" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Sy (mm^3)</label><div><input type="number" name="SyFut" id="SyFut" value="0" readonly="readonly" disabled="disabled"/></div><div style="padding: 10px; border: 1px solid black; margin-top: 30px"><label>Diamètre extérieur (mm)</label><div><input type="number" step="0.0001" name="D" id="D" value="700" min="0"/></div><div><label>Épaisseur de la paroi (mm)</label><div><input type="number" step="0.0001" name="t" id="t" value="10" min="0"/></div></div></div><div style="margin-top: 210px"><div><label>Ixx (mm^4)</label><div><input type="number" name="IxxFut" id="IxxFut" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Iyy (mm^4)</label><div><input type="number" name="IyyFut" id="IyyFut" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Distance fibre extr. pour Sx (mm)</label><div><input type="number" name="levierXFut" id="levierXFut" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Distance fibre extr. pour Sy (mm)</label><div><input type="number" name="levierYFut" id="levierYFut" value="0" readonly="readonly" disabled="disabled"/></div></div></div></div></form><div><label>Propriétés de la section modifiée</label><div style="margin-top: 15px"><label>Aire (mm^2)</label><div><input type="number" name="area" id="area" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Sx (mm^3)</label><div><input type="number" name="Sx" id="Sx" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Sy (mm^3)</label><div><input type="number" name="Sy" id="Sy" value="0" readonly="readonly" disabled="disabled"/></div></div><div style="padding: 10px; border: 1px solid black; margin-top: 30px"><div><label for="title">Nb openings</label> <input type="number" step="1" name="nbOpenings" id="nbOpenings" value="1" min="0"/></div><div><label>T1</label><div><input type="number" step="0.0001" name="T1" id="T1" value="100" min="0"/></div></div><div><label>T3</label><div><input type="number" step="0.0001" name="T3" id="T3" value="200" min="0"/></div></div><div><label>T4</label><div><input type="number" step="0.0001" name="T4" id="T4" value="10" min="0"/></div></div><div><label>T5</label><div><input type="number" step="0.0001" name="T5" id="T5" value="200" min="0"/></div></div><div><label>Theta (deg)</label><div><input type="number" step="0.0001" name="theta" id="theta" value="0" min="0"/></div></div></div><div style="margin-top: 30px"><div><label>Ixx (mm^4)</label><div><input type="number" name="Ixx" id="Ixx" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Iyy (mm^4)</label><div><input type="number" name="Iyy" id="Iyy" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Distance fibre extr. pour Sx (mm)</label><div><input type="number" name="levierX" id="levierX" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Distance fibre extr. pour Sy (mm)</label><div><input type="number" name="levierY" id="levierY" value="0" readonly="readonly" disabled="disabled"/></div></div></div></div><div><label>Ratio (Fût/Section)</label><div style="margin-top: 35px"><label>Ratio 1</label><div><input type="number" name="AreaRatio" id="AreaRatio" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Ratio 2</label><div><input type="number" name="SxRatio" id="SxRatio" value="0" readonly="readonly" disabled="disabled"/></div></div><div><label>Ratio 3</label><div><input type="number" name="SyRatio" id="SyRatio" value="0" readonly="readonly" disabled="disabled"/></div></div></div></div><div id="viewport"></div><footer id="version">v0.1.1</footer></body></html>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Section de fût — Calculateur</title><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"/><link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"/><link rel="stylesheet" href="../../assets/app.css"/><style>.layout {
+        position: fixed;
+        top: var(--appbar-h);
+        bottom: var(--footer-h);
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 540px;
+      }
+      .stage {
+        position: relative;
+        min-height: 0;
+        background: #0b1220;
+      }
+      #viewport {
+        position: absolute;
+        inset: 0;
+      }
+      .stage-hint {
+        position: absolute;
+        left: 12px;
+        bottom: 10px;
+        font-size: 12px;
+        color: #64748b;
+        pointer-events: none;
+      }
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+      #loading.done {
+        display: none;
+      }
+      .spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #1e293b;
+        border-top-color: #38bdf8;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .panel {
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        border-left: 1px solid var(--border);
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px 16px;
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .card h2 a {
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 500;
+      }
+      .fields {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px 12px;
+      }
+      .field label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #334155;
+      }
+      .field label .sym {
+        font-weight: 600;
+        color: var(--text);
+      }
+      .field label .unit {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .field input {
+        width: 100%;
+        height: 34px;
+        padding: 0 10px;
+        font: inherit;
+        font-variant-numeric: tabular-nums;
+        color: var(--text);
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+      }
+      .field input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+        background: #fff;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table.results {
+        width: 100%;
+        font-size: 13px;
+        border-collapse: collapse;
+        font-variant-numeric: tabular-nums;
+      }
+      .results th,
+      .results td {
+        padding: 7px 5px;
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+        white-space: nowrap;
+      }
+      .results thead th {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .results th[scope="row"],
+      .results thead th:first-child {
+        text-align: left;
+        font-weight: 500;
+      }
+      .results th[scope="row"] .unit {
+        color: var(--muted);
+        font-weight: 400;
+        font-size: 12px;
+      }
+      .results tbody tr:last-child > * {
+        border-bottom: 0;
+      }
+      .results .group > * {
+        padding-top: 12px;
+      }
+      .ratio {
+        display: inline-block;
+        min-width: 64px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-weight: 600;
+        text-align: center;
+        background: #f1f5f9;
+      }
+      .ratio[data-state="ok"] {
+        color: var(--ok);
+        background: var(--ok-soft);
+      }
+      .ratio[data-state="warn"] {
+        color: var(--warn);
+        background: var(--warn-soft);
+      }
+      .ratio-name {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .note {
+        margin: 10px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 960px) {
+        .layout {
+          position: static;
+          display: block;
+          padding: var(--appbar-h) 0 var(--footer-h);
+        }
+        .stage {
+          height: 55vh;
+        }
+        .panel {
+          border-left: 0;
+          padding: 12px;
+        }
+      }
+      @media (max-width: 520px) {
+        .fields {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .results th,
+        .results td {
+          padding: 6px 3px;
+          font-size: 12px;
+        }
+      }</style><script defer="defer" src="../../test-fut.js"></script></head><body><header class="appbar"><a class="brand" href="./"><img src="../../assets/logo.svg" alt=""/> <span>Section de fût<small>Propriétés géométriques</small></span></a><nav class="nav"><a href="./" aria-current="page">Calculateur</a> <a href="../../doc/">Documentation</a></nav></header><main class="layout"><section class="stage" aria-label="Vue de la section"><div id="viewport"></div><div id="loading"><div class="spinner"></div>Chargement du moteur géométrique…</div><div class="stage-hint">Glisser : pivoter · Molette : zoom · Clic droit : déplacer</div></section><aside class="panel"><form class="card" onsubmit="return false"><h2>Fût</h2><div class="fields"><div class="field"><label for="D"><span class="sym">D</span> diamètre ext. <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="D" name="D" value="700" min="0"/></div><div class="field"><label for="t"><span class="sym">t</span> épaisseur <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="t" name="t" value="10" min="0"/></div></div></form><form class="card" onsubmit="return false"><h2>Ouvertures et renforts <a href="../../doc/#geometrie">Schéma</a></h2><div class="fields"><div class="field"><label for="nbOpenings"><span class="sym">n</span> ouvertures</label> <input type="number" step="1" id="nbOpenings" name="nbOpenings" value="1" min="0"/></div><div class="field"><label for="T3"><span class="sym">T3</span> largeur <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="T3" name="T3" value="200" min="0"/></div><div class="field"><label for="theta"><span class="sym">θ</span> rotation <span class="unit">(°)</span></label> <input type="number" step="0.0001" id="theta" name="theta" value="0" min="0"/></div><div class="field"><label for="T1"><span class="sym">T1</span> saillie <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="T1" name="T1" value="100" min="0"/></div><div class="field"><label for="T4"><span class="sym">T4</span> ép. plaque <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="T4" name="T4" value="10" min="0"/></div><div class="field"><label for="T5"><span class="sym">T5</span> long. plaque <span class="unit">(mm)</span></label> <input type="number" step="0.0001" id="T5" name="T5" value="200" min="0"/></div></div></form><section class="card"><h2>Résultats <a href="../../doc/#proprietes">Formules</a></h2><div class="table-wrap"><table class="results"><thead><tr><th>Propriété</th><th>Fût</th><th>Section</th><th>Fût / Sect.</th></tr></thead><tbody><tr><th scope="row">A <span class="unit">mm²</span></th><td><output id="areaFut">–</output></td><td><output id="area">–</output></td><td><output class="ratio" id="AreaRatio">–</output><span class="ratio-name">Ratio 1</span></td></tr><tr><th scope="row">Sx <span class="unit">mm³</span></th><td><output id="SxFut">–</output></td><td><output id="Sx">–</output></td><td><output class="ratio" id="SxRatio">–</output><span class="ratio-name">Ratio 2</span></td></tr><tr><th scope="row">Sy <span class="unit">mm³</span></th><td><output id="SyFut">–</output></td><td><output id="Sy">–</output></td><td><output class="ratio" id="SyRatio">–</output><span class="ratio-name">Ratio 3</span></td></tr><tr class="group"><th scope="row">Ixx <span class="unit">mm⁴</span></th><td><output id="IxxFut">–</output></td><td><output id="Ixx">–</output></td><td></td></tr><tr><th scope="row">Iyy <span class="unit">mm⁴</span></th><td><output id="IyyFut">–</output></td><td><output id="Iyy">–</output></td><td></td></tr><tr><th scope="row">cₓ (pour Sx) <span class="unit">mm</span></th><td><output id="levierXFut">–</output></td><td><output id="levierX">–</output></td><td></td></tr><tr><th scope="row">cᵧ (pour Sy) <span class="unit">mm</span></th><td><output id="levierYFut">–</output></td><td><output id="levierY">–</output></td><td></td></tr></tbody></table></div><p class="note">cₓ, cᵧ : distance de l’axe neutre à la fibre extrême. Ratio ≤ 1,00 : la propriété de la section modifiée égale ou dépasse celle du fût.</p></section></aside></main><footer class="footer"><span>Section de fût · intégration exacte de la géométrie</span> <span id="version">v0.1.2</span></footer></body></html>

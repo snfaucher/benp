@@ -1,0 +1,132 @@
+:root {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #0284c7;
+  --accent-soft: #e0f2fe;
+  --bar: #0f172a;
+  --bar-text: #e2e8f0;
+  --ok: #047857;
+  --ok-soft: #d1fae5;
+  --warn: #b45309;
+  --warn-soft: #fef3c7;
+  --appbar-h: 56px;
+  --footer-h: 28px;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+}
+a {
+  color: var(--accent);
+}
+
+/* App bar */
+.appbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--appbar-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 20px;
+  background: var(--bar);
+  color: var(--bar-text);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.brand img {
+  width: 30px;
+  height: 30px;
+}
+.brand small {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.nav a[aria-current="page"] {
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+}
+
+/* Footer: always visible */
+.footer {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: var(--footer-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+#version {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (max-width: 420px) {
+  .brand span {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .appbar {
+    gap: 12px;
+    padding: 0 12px;
+  }
+  .brand small {
+    display: none;
+  }
+  .brand span {
+    font-size: 14px;
+  }
+  .nav a {
+    padding: 7px 8px;
+  }
+}
