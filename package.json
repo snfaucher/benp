@@ -1,6 +1,6 @@
 {
   "name": "opencascade.js-examples",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Examples for the opencascade.js project",
   "main": "src/main.js",
   "author": "Sebastian Alff <donalffons@gmail.com>",
