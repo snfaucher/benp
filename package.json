@@ -1,6 +1,6 @@
 {
   "name": "opencascade.js-examples",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "Examples for the opencascade.js project",
   "main": "src/main.js",
   "author": "Sebastian Alff <donalffons@gmail.com>",
@@ -17,9 +17,10 @@
   },
   "scripts": {
     "start": "webpack serve --mode development --open",
-    "build": "rm dist -fr && webpack --mode=production",
+    "build": "rm -rf dist && webpack --mode=production",
     "build-win": "del dist -fr && webpack --mode=production",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "npm version patch --no-git-tag-version && npm run build",
+    "deploy": "gh-pages -d dist -m \"Deploy v$(node -p \"require('./package.json').version\")\""
   },
   "dependencies": {
     "@babel/core": "^7.19.1",

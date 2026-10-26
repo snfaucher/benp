@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const { version } = require("./package.json");
 
 module.exports = {
   entry: () => {
@@ -54,6 +55,7 @@ module.exports = {
         template: path.join(__dirname + "/src/demos", dir, "index.html"),
         filename: `demos/${dir}/index.html`,
         chunks: [dir],
+        version,
       });
     }),
     new CopyPlugin({
