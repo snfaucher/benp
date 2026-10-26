@@ -373,9 +373,9 @@ export const makeFut2D = (
     areaFut: origProps.area,
     SxFut: origProps.Sx,
     SyFut: origProps.Sy,
-    AreaRatio: area / origProps.area,
-    SxRatio: Sx / origProps.Sx,
-    SyRatio: Sy / origProps.Sy,
+    AreaRatio: origProps.area / area,
+    SxRatio: origProps.Sx / Sx,
+    SyRatio: origProps.Sy / Sy,
   };
 };
 
